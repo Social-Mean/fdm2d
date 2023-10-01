@@ -1,0 +1,11 @@
+[submodule "thirdpart/pybind11"]
+	path = thirdpart/pybind11
+	url = https://github.com/pybind/pybind11.git
+	branch = stable
+[submodule "thirdpart/eigen"]
+	path = thirdpart/eigen
+	url = https://gitlab.com/libeigen/eigen.git
+	branch = 3.4
+[submodule "thirdpart/amgcl"]
+	path = thirdpart/amgcl
+	url = https://github.com/ddemidov/amgcl.git
