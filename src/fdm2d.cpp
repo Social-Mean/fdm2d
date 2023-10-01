@@ -102,23 +102,15 @@ void FDM2D::solveMatrix() {
     }
   }
 
-  phi = x.reshaped(phi.rows(), phi.cols());
+  phi = x.reshaped<Eigen::RowMajor>(phi.rows(), phi.cols());
   prof.toc("solve");
 
   std::cout << prof << std::endl;
 }
 
 void FDM2D::postProcess() {
-  std::cout << "开始保存" << std::endl;
-  if (std::ofstream file{"A.csv"}; file.is_open()) {
-    file << A.toDense();
-  }
-  // std::cout << phi << std::endl;
-
-  if (std::ofstream file{"phi.csv"}; file.is_open()) {
-    file << getPhi();
-  }
-  std::cout << "保存完成" << std::endl;
+  saveMatrix(A.toDense(), "A.csv");
+  saveMatrix(getPhi(), "phi.csv");
 }
 
 Eigen::MatrixXd FDM2D::getPhi() const { return phi; }
@@ -140,4 +132,14 @@ void FDM2D::set_D_BC(std::tuple<int, int> idx, double value) {
 
 void FDM2D::set_D_BC(int i, int j, double value) {
   set_D_BC(std::make_tuple(i, j), value);
+}
+
+void FDM2D::saveMatrix(const Eigen::MatrixXd matrix,
+                       std::string filename) const {
+  std::cout << std::format("开始保存\"{}\"\t", filename);
+  std::cout.flush();
+  if (std::ofstream file{filename}; file.is_open()) {
+    file << matrix;
+  }
+  std::cout << "保存完成" << std::endl;
 }

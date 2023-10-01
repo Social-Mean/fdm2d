@@ -13,8 +13,10 @@
 #include <amgcl/solver/cg.hpp>
 #include <amgcl/solver/gmres.hpp>
 #include <array>
+#include <format>
 #include <fstream>
 #include <iostream>
+#include <string>
 #include <tuple>
 #include <unordered_map>
 #include <utility>
@@ -62,4 +64,5 @@ class FDM2D {
   void set_D_BC(int i, int j, double value);
   void set_D_BC(int tag, double value);
   void set_D_BC(std::tuple<int, int> idx, double value);
+  void saveMatrix(const Eigen::MatrixXd matrix, std::string filename) const;
 };

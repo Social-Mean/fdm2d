@@ -6,11 +6,9 @@
 #include <memory>
 
 int main() {
-  int Nx = 11;
-  int Ny = 11;
-  std::cin >> Nx >> Ny;
-  auto fdm = std::make_unique<FDM2D>(Nx, Ny);
-  // FDM2D fdm{Nx, Ny};
-  fdm->solve();
+  int Nx = 21;
+  int Ny = 21;
+  FDM2D fdm{Nx, Ny};
+  fdm.solve();
   return 0;
 }
