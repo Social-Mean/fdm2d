@@ -108,10 +108,7 @@ void FDM2D::solveMatrix() {
   std::cout << prof << std::endl;
 }
 
-void FDM2D::postProcess() {
-  saveMatrix(A.toDense(), "A.csv");
-  saveMatrix(getPhi(), "phi.csv");
-}
+void FDM2D::postProcess() {}
 
 Eigen::MatrixXd FDM2D::getPhi() const { return phi; }
 
