@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Eigen/Cholesky>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
@@ -16,6 +17,7 @@
 #include <format>
 #include <fstream>
 #include <iostream>
+#include <ranges>
 #include <string>
 #include <tuple>
 #include <unordered_map>
@@ -39,6 +41,9 @@ class FDM2D {
   FDM2D(int Nx, int Ny);
   void solve();
   Eigen::MatrixXd getPhi() const;
+  void add_D_BC(int i, int j, double value);
+  void add_D_BCs(const std::vector<int>& is, const std::vector<int>& js,
+                 const std::vector<double>& values);
 
  private:
   int Nx;
@@ -50,6 +55,7 @@ class FDM2D {
   Eigen::MatrixXd phi;
   std::unordered_map<int, std::tuple<int, int> > tag2idx;
   std::unordered_map<std::tuple<int, int>, int, TupleHash> idx2tag;
+  std::vector<std::tuple<int, int, double>> D_BCs;
 
   void initMaps();
   void setMatrix();
@@ -62,7 +68,5 @@ class FDM2D {
   void postProcess();
   void eraseRow(Eigen::SparseMatrix<double>&, int);
   void set_D_BC(int i, int j, double value);
-  void set_D_BC(int tag, double value);
-  void set_D_BC(std::tuple<int, int> idx, double value);
   void saveMatrix(const Eigen::MatrixXd matrix, std::string filename) const;
 };

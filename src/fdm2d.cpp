@@ -50,19 +50,22 @@ void FDM2D::setBCs() {
 }
 
 void FDM2D::set_D_BCs() {
-  for (int i = 0; i < Nx; ++i) {
-    for (int j : {0, Ny - 1}) {
-      set_D_BC(i, j, 0);
-    }
-  }
+  // for (int i = 0; i < Nx; ++i) {
+  //   for (int j : {0, Ny - 1}) {
+  //     set_D_BC(i, j, 0);
+  //   }
+  // }
 
-  for (int j = 0; j < Ny; ++j) {
-    for (int i : {0, Nx - 1}) {
-      set_D_BC(i, j, 0);
-    }
-  }
+  // for (int j = 0; j < Ny; ++j) {
+  //   for (int i : {0, Nx - 1}) {
+  //     set_D_BC(i, j, 0);
+  //   }
+  // }
 
-  set_D_BC(Nx / 2, Ny / 2, 1);
+  // set_D_BC(Nx / 2, Ny / 2, 1);
+  for (auto& [i, j, value] : D_BCs) {
+    set_D_BC(i, j, value);
+  }
 
   A.makeCompressed();
 }
@@ -73,7 +76,6 @@ void FDM2D::set_R_BCs() {}
 
 void FDM2D::solve() {
   setMatrix();
-  setBCs();
   solveMatrix();
   postProcess();
 }
@@ -108,10 +110,7 @@ void FDM2D::solveMatrix() {
   std::cout << prof << std::endl;
 }
 
-void FDM2D::postProcess() {
-  saveMatrix(A.toDense(), "A.csv");
-  saveMatrix(getPhi(), "phi.csv");
-}
+void FDM2D::postProcess() {}
 
 Eigen::MatrixXd FDM2D::getPhi() const { return phi; }
 
@@ -119,19 +118,11 @@ void FDM2D::eraseRow(Eigen::SparseMatrix<double>& matrix, int _row) {
   matrix.prune([_row](int row, int col, double value) { return row != _row; });
 }
 
-void FDM2D::set_D_BC(int tag, double value) {
+void FDM2D::set_D_BC(int i, int j, double value) {
+  auto tag = idx2tag[std::make_tuple(i, j)];
   eraseRow(A, tag);
   A.insert(tag, tag) = 1;
   b(tag) = value;
-}
-
-void FDM2D::set_D_BC(std::tuple<int, int> idx, double value) {
-  auto tag = idx2tag[idx];
-  set_D_BC(tag, value);
-}
-
-void FDM2D::set_D_BC(int i, int j, double value) {
-  set_D_BC(std::make_tuple(i, j), value);
 }
 
 void FDM2D::saveMatrix(const Eigen::MatrixXd matrix,
@@ -142,4 +133,21 @@ void FDM2D::saveMatrix(const Eigen::MatrixXd matrix,
     file << matrix;
   }
   std::cout << "保存完成" << std::endl;
+}
+
+void FDM2D::add_D_BC(int i, int j, double value) {
+  D_BCs.push_back(std::make_tuple(i, j, value));
+}
+
+void FDM2D::add_D_BCs(const std::vector<int>& is, const std::vector<int>& js,
+                      const std::vector<double>& values) {
+  // if (!(is.size() == js.size() && is.size() == values.size())) {
+  // // BUG: pybind11 的异常处理
+  //   throw "数组长度不匹配";
+  // }
+  // TODO: 创建一个向量, 存储此次增加的边界条件, 再连接D_BCs和这个新增加的向量
+  for (auto [i, j, value] : std::views::zip(is, js, values)) {
+    add_D_BC(i, j, value);
+  }
+  // for (auto i = std::begin)
 }
