@@ -73,7 +73,6 @@ void FDM2D::set_R_BCs() {}
 
 void FDM2D::solve() {
   setMatrix();
-  setBCs();
   solveMatrix();
   postProcess();
 }
