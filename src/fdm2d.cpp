@@ -27,7 +27,8 @@ void FDM2D::setMatrix() {
 void FDM2D::setPoisson() {
   using T = Eigen::Triplet<double>;
   int listSize = 5 * (Nx - 2) * (Ny - 2);
-  std::vector<T> tripletList(listSize);
+  std::vector<T> tripletList;
+  tripletList.reserve(listSize);
   for (int i = 1; i < Nx - 1; ++i) {
     for (int j = 1; j < Ny - 1; ++j) {
       auto idx{std::make_tuple(i, j)};
